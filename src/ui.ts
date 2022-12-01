@@ -1,17 +1,16 @@
 import { CaptureSource, LineRange, CaptureInput } from './capture/model';
-import { window, env, Uri } from 'vscode';
+import { window, env, Uri, ParameterInformation } from 'vscode';
 import DomParser = require('dom-parser');
 
-
-
+export const pastRec:string[] = [];
+export const tmpRecList = ["1Rec",'2Rec', '3Rec', '4Rec'];
 export async function showQuickPick(text: CaptureSource) {
 	// TODO: axios로 capturesource에 의한 caption recommentation 받아오기
-	let i = 0;
 	const imgTag = text.content;
 	const parser = new DomParser();
-	const list: string[] | Thenable<string[]> = [];
 	if(!imgTag){
-		return {};
+		console.log("imgTag NULL");
+		return window.showInformationMessage('Check if you selected the valid code');
 	}
 	const dom = parser.parseFromString(imgTag);
 	console.log("DOM: ", dom);
@@ -19,27 +18,72 @@ export async function showQuickPick(text: CaptureSource) {
 	if(!element){
 		return window.showInformationMessage('Check if you selected the valid code');
 	}
-	const elem = element[0].getAttribute("src");
-	if(!elem || !list){
+	const srcText = element[0].getAttribute("src");
+	if(!srcText){
+		console.log("srcText NULL");
 		return {};
 	}
-	list.push(elem);
-	list.push("Draw another recommendation");
+	const altRec = getCaptionRec(srcText);
+	// list.push(elem);
+	// list.push("Draw another recommendation");
+	// const uiList = list.concat(pastRec);
+	reLoadHistory(srcText, altRec);
 
-	const result = await window.showQuickPick(list, {
-		placeHolder: 'Select recommendation',
-		onDidSelectItem: item => {
-			// if(list.indexOf(String(item)) == 1){
-			// }
-			// TODO: 실제로는 recommendation 1개랑 draw 하는 버튼으로 설정해야할듯! 또는 시간 없으면 그냥 recommendation 만...
-			return window.showInformationMessage(`Focus ${++i}: ${item}`);
-		}
-	});
-	showInputBox(result);
+	// const result = await window.showQuickPick(uiList, {
+	// 	placeHolder: 'Select recommendation',
+	// 	onDidSelectItem: item => {
+	// 		// if(list.indexOf(String(item)) == 1){
+	// 		// }
+	// 		// TODO: 실제로는 recommendation 1개랑 draw 하는 버튼으로 설정해야할듯! 또는 시간 없으면 그냥 recommendation 만...
+	// 		return window.showInformationMessage(`Focus ${++i}: ${item}`);
+	// 	}
+	// });
+	// showInputBox(result);
 	// window.showInformationMessage(`Got: ${result}`);
 	// TODO: 이 showInformation 부분에서 send 버튼을 누르게 하면 되겠다. 근데 필수적인 것 아님. 
 }
 
+async function reLoadHistory(src: string, elem:string){
+	console.log("HIStory: ", pastRec);
+	if(!src){
+		console.log("src null");
+	}
+	if(!elem){
+		console.log("elem null");
+	}
+	console.log("reLoadHistory of ", src, elem);
+	const list = [elem];
+	list.push("Draw Another Recommendation");
+	const uiList = list.concat(pastRec);
+	let index = 0;
+	const result = await window.showQuickPick(uiList, {
+		placeHolder: 'Select recommendation',
+		onDidSelectItem: item => {
+			index = uiList.indexOf(String(item));
+			// TODO: 실제로는 recommendation 1개랑 draw 하는 버튼으로 설정해야할듯! 또는 시간 없으면 그냥 recommendation 만...
+			return window.showInformationMessage('Selected!');
+		}
+	});
+	if(index == 1){
+		const newRec = getCaptionRec(src);
+		pastRec.push(elem);
+		console.log("Recorrd Updated: ", pastRec);
+		reLoadHistory(src, newRec);
+	} else {
+		showInputBox(result);
+	}
+}
+
+function getCaptionRec(src:string) {
+	if(!src){
+		console.log("No nsrc to get cap");
+		return "AA";
+	}
+	const i = Math.round(Math.random()*3);
+	console.log("I: ", i);
+	console.log("SRc to get caption: ", src);
+	return tmpRecList[i];
+}
 /**
  * Shows an input box using window.showInputBox().
  */

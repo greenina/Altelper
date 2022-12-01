@@ -1,0 +1,55 @@
+{
+	"name": "code-actions-sample",
+	"private": true,
+	"displayName": "Code Actions Provider Sample",
+	"version": "0.0.2",
+	"publisher": "vscode-samples",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Microsoft/vscode-extension-samples"
+	},
+	"bugs": {
+		"url": "https://github.com/Microsoft/vscode-extension-samples/issues"
+	},
+	"engines": {
+		"vscode": "^1.32.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onLanguage:html",
+		"onLanguage:markdown",
+		"onCommand:codelingo.capture"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "codelingo.capture",
+				"title": "CodeLingo capture"
+			}
+		],
+		"configuration": {
+			"title": "CodeLingo"
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint \"src/**/*.ts\"",
+		"watch": "tsc -watch -p ./"
+	},
+	"devDependencies": {
+		"@types/node": "^16.11.7",
+		"@types/vscode": "^1.32.0",
+		"@typescript-eslint/eslint-plugin": "^5.42.0",
+		"@typescript-eslint/parser": "^5.42.0",
+		"eslint": "^8.26.0",
+		"typescript": "^4.8.4"
+	},
+	"dependencies": {
+		"@types/dom-parser": "^0.1.1",
+		"dom-parser": "^0.1.6"
+	}
+}

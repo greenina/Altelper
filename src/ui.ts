@@ -85,15 +85,19 @@ function getCaptionRec(src:string) {
 // 	fix.edit.replace(document.uri, new vscode.Range(range.start, range.start.translate(0, 2)), emoji);
 // 	return fix;
 // }
-export async function resetAlt(document: TextDocument, original: CaptureSource){
+export async function resetAlt(document: TextDocument, original: CaptureSource, result: string|undefined){
 	const editor = window.activeTextEditor;
 	if(!original.lineRange){
 		return{};
 	}
 	const selection = new Selection(original.lineRange.start, original.lineRange.end);
+	if(!result){
+		return{};
+	}
 	editor?.edit(editBuilder => {
-		editBuilder.replace(selection, "NEW");
+		editBuilder.replace(selection, result);
 	});
+	// TODO: reset pastRec
 }
 export async function showInputBox(selected: string|undefined, original: CaptureSource) {
 	const result = await window.showInputBox({
@@ -107,7 +111,7 @@ export async function showInputBox(selected: string|undefined, original: Capture
 	if(!window.activeTextEditor?.document){
 		return {};
 	}
-	resetAlt(window.activeTextEditor.document, original);
+	resetAlt(window.activeTextEditor.document, original, result);
 	window.showInformationMessage(`Got: ${result}`);
 }
 

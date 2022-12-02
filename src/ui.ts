@@ -1,5 +1,5 @@
 import { CaptureSource, LineRange, CaptureInput } from './capture/model';
-import { window, env, Uri, ParameterInformation } from 'vscode';
+import { window, env, Uri, ParameterInformation, CodeAction, WorkspaceEdit, CodeActionKind, Range, TextDocument, Selection } from 'vscode';
 import DomParser = require('dom-parser');
 
 export const pastRec:string[] = [];
@@ -9,11 +9,9 @@ export async function showQuickPick(text: CaptureSource) {
 	const imgTag = text.content;
 	const parser = new DomParser();
 	if(!imgTag){
-		console.log("imgTag NULL");
 		return window.showInformationMessage('Check if you selected the valid code');
 	}
 	const dom = parser.parseFromString(imgTag);
-	console.log("DOM: ", dom);
 	const element = dom.getElementsByTagName('img');
 	if(!element){
 		return window.showInformationMessage('Check if you selected the valid code');
@@ -27,7 +25,7 @@ export async function showQuickPick(text: CaptureSource) {
 	// list.push(elem);
 	// list.push("Draw another recommendation");
 	// const uiList = list.concat(pastRec);
-	reLoadHistory(srcText, altRec);
+	reLoadHistory(srcText, altRec, text);
 
 	// const result = await window.showQuickPick(uiList, {
 	// 	placeHolder: 'Select recommendation',
@@ -43,8 +41,7 @@ export async function showQuickPick(text: CaptureSource) {
 	// TODO: 이 showInformation 부분에서 send 버튼을 누르게 하면 되겠다. 근데 필수적인 것 아님. 
 }
 
-async function reLoadHistory(src: string, elem:string){
-	console.log("HIStory: ", pastRec);
+async function reLoadHistory(src: string, elem:string, original: CaptureSource){
 	if(!src){
 		console.log("src null");
 	}
@@ -68,26 +65,37 @@ async function reLoadHistory(src: string, elem:string){
 		const newRec = getCaptionRec(src);
 		pastRec.push(elem);
 		console.log("Recorrd Updated: ", pastRec);
-		reLoadHistory(src, newRec);
+		reLoadHistory(src, newRec, original);
 	} else {
-		showInputBox(result);
+		showInputBox(result, original);
 	}
 }
 
 function getCaptionRec(src:string) {
 	if(!src){
-		console.log("No nsrc to get cap");
+		console.log("No src to get cap");
 		return "AA";
 	}
 	const i = Math.round(Math.random()*3);
-	console.log("I: ", i);
-	console.log("SRc to get caption: ", src);
 	return tmpRecList[i];
 }
-/**
- * Shows an input box using window.showInputBox().
- */
-export async function showInputBox(selected: string|undefined) {
+// async function createFix(document: vscode.TextDocument, range: vscode.Range, emoji: string): vscode.CodeAction {
+// 	const fix = new vscode.CodeAction(`Convert to ${emoji}`, vscode.CodeActionKind.QuickFix);
+// 	fix.edit = new vscode.WorkspaceEdit();
+// 	fix.edit.replace(document.uri, new vscode.Range(range.start, range.start.translate(0, 2)), emoji);
+// 	return fix;
+// }
+export async function resetAlt(document: TextDocument, original: CaptureSource){
+	const editor = window.activeTextEditor;
+	if(!original.lineRange){
+		return{};
+	}
+	const selection = new Selection(original.lineRange.start, original.lineRange.end);
+	editor?.edit(editBuilder => {
+		editBuilder.replace(selection, "NEW");
+	});
+}
+export async function showInputBox(selected: string|undefined, original: CaptureSource) {
 	const result = await window.showInputBox({
 		value: selected,
 		placeHolder: 'Modify your selection',
@@ -96,6 +104,10 @@ export async function showInputBox(selected: string|undefined) {
 			return text === '123' ? 'Not 123!' : null;
 		}
 	});
+	if(!window.activeTextEditor?.document){
+		return {};
+	}
+	resetAlt(window.activeTextEditor.document, original);
 	window.showInformationMessage(`Got: ${result}`);
 }
 

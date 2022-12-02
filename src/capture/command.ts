@@ -1,4 +1,4 @@
-import { ProgressLocation, window } from 'vscode';
+import { ProgressLocation, Range, window } from 'vscode';
 import { CaptureSource, LineRange, CaptureInput } from './model';
 import * as ui from '../ui';
 import {showQuickPick, showInputBox} from '../ui';
@@ -23,7 +23,7 @@ export default async function capture(): Promise<any>{
   };
 	console.log("CONTENT");
 	console.log("Content: ", content?.substring(0,4));
-	console.log("Linerange: ", lineRange);
+	// console.log("Linerange: ", lineRange);
 	showQuickPick(source);
 
 
@@ -53,7 +53,7 @@ export default async function capture(): Promise<any>{
 // }
 
 async function inferContextFromActiveEditor(): Promise<{
-  lineRange?: [number, number];
+  lineRange?: Range;
 	content?: string;
 }>{
 	const editor = window.activeTextEditor;
@@ -71,7 +71,7 @@ async function inferContextFromActiveEditor(): Promise<{
   }
 
 	const { start, end } = editor.selection;
-  const lineRange: LineRange = [start.line + 1, end.line + 1];
+  const lineRange = new Range(start, end);
   const content = editor.document.getText(editor.selection);
 	
 	return { lineRange, content };

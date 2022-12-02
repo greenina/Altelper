@@ -27,7 +27,7 @@
 		"commands": [
 			{
 				"command": "codelingo.capture",
-				"title": "CodeLingo capture"
+				"title": "CS492 Image-Text Synergy"
 			}
 		],
 		"configuration": {

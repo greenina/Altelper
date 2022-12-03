@@ -1,5 +1,5 @@
 import { CaptureSource, LineRange } from './capture/model';
-import { window, env, Uri, ParameterInformation, CodeAction, WorkspaceEdit, CodeActionKind, Range, TextDocument, Selection } from 'vscode';
+import { window, env, Uri, ParameterInformation, CodeAction, WorkspaceEdit, CodeActionKind, Range, TextDocument, Selection, Diagnostic } from 'vscode';
 import DomParser = require('dom-parser');
 import axios from 'axios';
 
@@ -14,15 +14,18 @@ export async function showQuickPick(text: CaptureSource) {
 	}
 	const dom = parser.parseFromString(imgTag);
 	const element = dom.getElementsByTagName('img');
-	const div_elem = dom.getElementsByTagName('div');
+	let div_elem = null;
 	let div_text = "Not Captured";
-	if(!element || !div_elem){
+	if(dom.getElementsByTagName('div')){
+		div_elem = dom.getElementsByTagName('div');
+		if(div_elem && div_elem[0]){
+			div_text = div_elem[0].innerHTML;
+		}	
+	}
+	if(!element){
 		return window.showInformationMessage('Check if you selected the valid code');
 	}
 	const srcText = element[0].getAttribute("src");
-	if(div_elem){
-		div_text = div_elem[0].innerHTML;
-	}
 	
 	if(!srcText){
 		return window.showInformationMessage('Check if you entered valid src');
@@ -83,8 +86,9 @@ export async function resetAlt(document: TextDocument, original: CaptureSource, 
 		return{};
 	}
 	// TODO: algorithm refactoring : 아래처럼 하지 말고 original parsing 해서 height, weight 같은 다른 attribute도 반영 시키기
-	const text_div = `<div>` + `${div_text == "Not Captured"?null:div_text}`; 
-	const final = text_div + `</div>\n<img \n	src="` + src + `" \n	alt="` + result + `"\n/>`;
+	const text_div = `<div>` + `${div_text == "Not Captured"?null:div_text}` + `</div>\n`; 
+	const text_img = `<img \n	src="` + src + `" \n	alt="` + result + `"\n/>`;
+	const final = div_text == "Not Captured"?text_img:text_div + text_img;
 	editor?.edit(editBuilder => {
 		editBuilder.replace(selection, final);
 	});

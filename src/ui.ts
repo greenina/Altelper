@@ -19,7 +19,7 @@ export async function showQuickPick(text: CaptureSource) {
 		return window.showInformationMessage('Check if you selected the valid code');
 	}
 	const srcText = element[0].getAttribute("src");
-	const div_text = div_elem[0].innerHTML;
+	// const div_text = div_elem[0].innerHTML;
 	if(!srcText){
 		return window.showInformationMessage('Check if you entered valid src');
 	}
@@ -97,6 +97,11 @@ export async function showInputBox(src: string, selected: string|undefined, orig
 	if(!window.activeTextEditor?.document){
 		return window.showInformationMessage('Check if your editor is activated');
 	}
+	axios.post(`URL`,{
+		imgUrl: src,
+		finalAlt: result
+	});
+	// respond는 success 여부 boolean으로 보내주면 될듯! 
 	resetAlt(window.activeTextEditor.document, original, result, src);
 	// window.showInformationMessage(`Got: ${result}`);
 }

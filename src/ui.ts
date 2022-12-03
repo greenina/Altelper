@@ -18,8 +18,7 @@ export async function showQuickPick(text: CaptureSource) {
 	}
 	const srcText = element[0].getAttribute("src");
 	if(!srcText){
-		console.log("srcText NULL");
-		return {};
+		return window.showInformationMessage('Check if you entered valid src');
 	}
 	const altRec = getCaptionRec(srcText);
 	reLoadHistory(srcText, altRec, text);
@@ -27,29 +26,22 @@ export async function showQuickPick(text: CaptureSource) {
 }
 
 async function reLoadHistory(src: string, elem:string, original: CaptureSource){
-	if(!src){
-		console.log("src null");
-	}
-	if(!elem){
-		console.log("elem null");
-	}
 	console.log("reLoadHistory of ", src, elem);
-	const list = [elem];
-	list.push("Draw Another Recommendation");
+	const list = ["Draw Another Recommendation"];
+	list.push(elem);
 	const uiList = list.concat(pastRec);
 	let index = 0;
 	const result = await window.showQuickPick(uiList, {
 		placeHolder: 'Select recommendation',
 		onDidSelectItem: item => {
 			index = uiList.indexOf(String(item));
-			// TODO: 실제로는 recommendation 1개랑 draw 하는 버튼으로 설정해야할듯! 또는 시간 없으면 그냥 recommendation 만...
-			return window.showInformationMessage('Selected!');
+			// return window.showInformationMessage('Selected!');
 		}
 	});
-	if(index == 1){
+	if(index == 0){
 		const newRec = getCaptionRec(src);
 		pastRec.push(elem);
-		console.log("Recorrd Updated: ", pastRec);
+		// console.log("Recorrd Updated: ", pastRec);
 		reLoadHistory(src, newRec, original);
 	} else {
 		showInputBox(src, result, original);
@@ -64,12 +56,7 @@ function getCaptionRec(src:string) {
 	const i = Math.round(Math.random()*3);
 	return tmpRecList[i];
 }
-// async function createFix(document: vscode.TextDocument, range: vscode.Range, emoji: string): vscode.CodeAction {
-// 	const fix = new vscode.CodeAction(`Convert to ${emoji}`, vscode.CodeActionKind.QuickFix);
-// 	fix.edit = new vscode.WorkspaceEdit();
-// 	fix.edit.replace(document.uri, new vscode.Range(range.start, range.start.translate(0, 2)), emoji);
-// 	return fix;
-// }
+
 export async function resetAlt(document: TextDocument, original: CaptureSource, result: string|undefined, src:string){
 	const editor = window.activeTextEditor;
 	if(!original.lineRange){
@@ -84,23 +71,22 @@ export async function resetAlt(document: TextDocument, original: CaptureSource, 
 		editBuilder.replace(selection, final);
 	});
 	
-	// TODO: reset pastRec
 	pastRec = [];
 }
 export async function showInputBox(src: string, selected: string|undefined, original: CaptureSource) {
 	const result = await window.showInputBox({
 		value: selected,
-		placeHolder: 'Modify your selection',
+		placeHolder: 'You can modify your selection',
 		validateInput: text => {
-			window.showInformationMessage(`Validating: ${text}`);
-			return text === '123' ? 'Not 123!' : null;
+			// window.showInformationMessage(`Validating: ${text}`);
+			return text==='123'?'123':null;
 		}
 	});
 	if(!window.activeTextEditor?.document){
-		return {};
+		return window.showInformationMessage('Check if your editor is activated');
 	}
 	resetAlt(window.activeTextEditor.document, original, result, src);
-	window.showInformationMessage(`Got: ${result}`);
+	// window.showInformationMessage(`Got: ${result}`);
 }
 
 export async function showImgCaptionMade(source: CaptureSource) {

@@ -13,10 +13,12 @@ export async function showQuickPick(text: CaptureSource) {
 	}
 	const dom = parser.parseFromString(imgTag);
 	const element = dom.getElementsByTagName('img');
-	if(!element){
+	const div_elem = dom.getElementsByTagName('div');
+	if(!element || !div_elem){
 		return window.showInformationMessage('Check if you selected the valid code');
 	}
 	const srcText = element[0].getAttribute("src");
+	const div_text = div_elem[0].innerHTML;
 	if(!srcText){
 		return window.showInformationMessage('Check if you entered valid src');
 	}

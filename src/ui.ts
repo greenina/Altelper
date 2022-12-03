@@ -60,15 +60,15 @@ function getCaptionRec(src:string, div_text: string) {
 		console.log("No src to get cap");
 		return "Dummy Rec";
 	}
-	axios
-		.post(`URL`, {
-			imgUrl: src,
-			context: div_text
-			// 인준이 모델 적용 시 추가 예정 : context: string 
-		})
-		.then((res) => {
-			return res; // res type: json : {alt: String}
-	});
+	// axios
+	// 	.post(`URL`, {
+	// 		imgUrl: src,
+	// 		context: div_text
+	// 		// 인준이 모델 적용 시 추가 예정 : context: string 
+	// 	})
+	// 	.then((res) => {
+	// 		return res; // res type: json : {alt: String}
+	// });
 	const i = Math.round(Math.random()*3);
 	return tmpRecList[i];
 }
@@ -82,9 +82,9 @@ export async function resetAlt(document: TextDocument, original: CaptureSource, 
 	if(!result){
 		return{};
 	}
-	// TODO: 아래처럼 하지 말고 original parsing 해서 height, weight 같은 다른 attribute도 반영 시키기
+	// TODO: algorithm refactoring : 아래처럼 하지 말고 original parsing 해서 height, weight 같은 다른 attribute도 반영 시키기
 	const text_div = `<div>` + `${div_text == "Not Captured"?null:div_text}`; 
-	const final = text_div + `</div>\n<img src="` + src + `" alt="` + result + `" />`;
+	const final = text_div + `</div>\n<img src="` + src + `" \n	alt="` + result + `" />`;
 	editor?.edit(editBuilder => {
 		editBuilder.replace(selection, final);
 	});

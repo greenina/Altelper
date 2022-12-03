@@ -1,5 +1,5 @@
 import { ProgressLocation, Range, window } from 'vscode';
-import { CaptureSource, LineRange, CaptureInput } from './model';
+import { CaptureSource, LineRange } from './model';
 import * as ui from '../ui';
 import {showQuickPick, showInputBox} from '../ui';
 
@@ -28,27 +28,6 @@ export default async function capture(): Promise<any>{
   return await ui.showImgCaptionMade(source);
 }
 
-// async function getCaption(
-//   inputContent: CaptureInput,
-//   source: CaptureSource) {
-//   return await window.withProgress(
-//     {
-//       location: ProgressLocation.Window,
-//       cancellable: false,
-//       title: 'Loading Caption...',
-//     },
-//     async () => {
-//       return await axios({
-//         url: ``,
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         data: {
-//           name: inputContent.title
-//         },
-//       });
-//     }
-//   );
-// }
 
 async function inferContextFromActiveEditor(): Promise<{
   lineRange?: Range;

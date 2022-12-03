@@ -21,8 +21,6 @@ export default async function capture(): Promise<any>{
     lineRange,
     content
   };
-	console.log("CONTENT");
-	console.log("Content: ", content?.substring(0,4));
 	// console.log("Linerange: ", lineRange);
 	showQuickPick(source);
 

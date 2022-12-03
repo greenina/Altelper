@@ -26,7 +26,7 @@ export async function showQuickPick(text: CaptureSource) {
 }
 
 async function reLoadHistory(src: string, elem:string, original: CaptureSource){
-	console.log("reLoadHistory of ", src, elem);
+	// console.log("reLoadHistory of ", src, elem);
 	const list = ["Write from Scratch","Draw Another Recommendation"];
 	list.push(elem);
 	const uiList = list.concat(pastRec);
@@ -51,7 +51,7 @@ async function reLoadHistory(src: string, elem:string, original: CaptureSource){
 function getCaptionRec(src:string) {
 	if(!src){
 		console.log("No src to get cap");
-		return "AA";
+		return "Dummy Rec";
 	}
 	const i = Math.round(Math.random()*3);
 	return tmpRecList[i];

@@ -1,6 +1,7 @@
 import { CaptureSource, LineRange } from './capture/model';
 import { window, env, Uri, ParameterInformation, CodeAction, WorkspaceEdit, CodeActionKind, Range, TextDocument, Selection } from 'vscode';
 import DomParser = require('dom-parser');
+import axios from 'axios';
 
 export let pastRec:string[] = [];
 export const tmpRecList = ["1Rec",'2Rec', '3Rec', '4Rec'];

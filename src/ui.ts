@@ -56,6 +56,14 @@ function getCaptionRec(src:string) {
 		console.log("No src to get cap");
 		return "Dummy Rec";
 	}
+	// axios
+	// 	.post(`URL`, {
+	// 		imgUrl: src
+	// 		// 인준이 모델 적용 시 추가 예정 : context: string 
+	// 	})
+	// 	.then((res) => {
+	// 		return res; // res type: json : {alt: String}
+	// });
 	const i = Math.round(Math.random()*3);
 	return tmpRecList[i];
 }

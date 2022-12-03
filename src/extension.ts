@@ -7,7 +7,7 @@ const COMMAND = 'code-actions-sample.command';
 
 export function activate(context: vscode.ExtensionContext) {
 	console.log("enter activate");
-	const captureCommand = vscode.commands.registerCommand('codelingo.capture', capture);
+	const captureCommand = vscode.commands.registerCommand('cs491i.capture', capture);
 	console.log("ready to push");
 	context.subscriptions.push(captureCommand);
 }

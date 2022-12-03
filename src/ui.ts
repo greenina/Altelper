@@ -63,11 +63,13 @@ function getCaptionRec(src:string, div_text: string) {
 		console.log("No src to get cap");
 		return "Dummy Rec";
 	}
+	// TOJIHO: 그냥 captioning model에서는 div_text가 없을테고 이때 default 값은 "Not Captured"로 설정돼있어. 
+	// "Not Captured"일 경우 인준이 모델 말고, huggingface 모델에 imgUrl input만 받아서 alt text res 주면 될 것 같아.  
+
 	// axios
 	// 	.post(`URL`, {
 	// 		imgUrl: src,
 	// 		context: div_text
-	// 		// 인준이 모델 적용 시 추가 예정 : context: string 
 	// 	})
 	// 	.then((res) => {
 	// 		return res; // res type: json : {alt: String}
@@ -107,10 +109,11 @@ export async function showInputBox(src: string, selected: string|undefined, orig
 	if(!window.activeTextEditor?.document){
 		return window.showInformationMessage('Check if your editor is activated');
 	}
-	axios.post(`URL`,{
-		imgUrl: src,
-		finalAlt: result
-	});
+	// TOJIHO: 
+	// axios.post(`URL`,{
+	// 	imgUrl: src,
+	// 	finalAlt: result
+	// });
 	// respond는 success 여부 boolean으로 보내주면 될듯! 
 	resetAlt(window.activeTextEditor.document, original, result, src, div_text);
 	// window.showInformationMessage(`Got: ${result}`);

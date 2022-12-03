@@ -1,8 +1,8 @@
-import { CaptureSource, LineRange, CaptureInput } from './capture/model';
+import { CaptureSource, LineRange } from './capture/model';
 import { window, env, Uri, ParameterInformation, CodeAction, WorkspaceEdit, CodeActionKind, Range, TextDocument, Selection } from 'vscode';
 import DomParser = require('dom-parser');
 
-export const pastRec:string[] = [];
+export let pastRec:string[] = [];
 export const tmpRecList = ["1Rec",'2Rec', '3Rec', '4Rec'];
 export async function showQuickPick(text: CaptureSource) {
 	// TODO: axios로 capturesource에 의한 caption recommentation 받아오기
@@ -22,23 +22,8 @@ export async function showQuickPick(text: CaptureSource) {
 		return {};
 	}
 	const altRec = getCaptionRec(srcText);
-	// list.push(elem);
-	// list.push("Draw another recommendation");
-	// const uiList = list.concat(pastRec);
 	reLoadHistory(srcText, altRec, text);
 
-	// const result = await window.showQuickPick(uiList, {
-	// 	placeHolder: 'Select recommendation',
-	// 	onDidSelectItem: item => {
-	// 		// if(list.indexOf(String(item)) == 1){
-	// 		// }
-	// 		// TODO: 실제로는 recommendation 1개랑 draw 하는 버튼으로 설정해야할듯! 또는 시간 없으면 그냥 recommendation 만...
-	// 		return window.showInformationMessage(`Focus ${++i}: ${item}`);
-	// 	}
-	// });
-	// showInputBox(result);
-	// window.showInformationMessage(`Got: ${result}`);
-	// TODO: 이 showInformation 부분에서 send 버튼을 누르게 하면 되겠다. 근데 필수적인 것 아님. 
 }
 
 async function reLoadHistory(src: string, elem:string, original: CaptureSource){
@@ -67,7 +52,7 @@ async function reLoadHistory(src: string, elem:string, original: CaptureSource){
 		console.log("Recorrd Updated: ", pastRec);
 		reLoadHistory(src, newRec, original);
 	} else {
-		showInputBox(result, original);
+		showInputBox(src, result, original);
 	}
 }
 
@@ -85,7 +70,7 @@ function getCaptionRec(src:string) {
 // 	fix.edit.replace(document.uri, new vscode.Range(range.start, range.start.translate(0, 2)), emoji);
 // 	return fix;
 // }
-export async function resetAlt(document: TextDocument, original: CaptureSource, result: string|undefined){
+export async function resetAlt(document: TextDocument, original: CaptureSource, result: string|undefined, src:string){
 	const editor = window.activeTextEditor;
 	if(!original.lineRange){
 		return{};
@@ -94,12 +79,15 @@ export async function resetAlt(document: TextDocument, original: CaptureSource, 
 	if(!result){
 		return{};
 	}
+	const final = `<img src="` + src + `" alt="` + result + `" />`;
 	editor?.edit(editBuilder => {
-		editBuilder.replace(selection, result);
+		editBuilder.replace(selection, final);
 	});
+	
 	// TODO: reset pastRec
+	pastRec = [];
 }
-export async function showInputBox(selected: string|undefined, original: CaptureSource) {
+export async function showInputBox(src: string, selected: string|undefined, original: CaptureSource) {
 	const result = await window.showInputBox({
 		value: selected,
 		placeHolder: 'Modify your selection',
@@ -111,44 +99,8 @@ export async function showInputBox(selected: string|undefined, original: Capture
 	if(!window.activeTextEditor?.document){
 		return {};
 	}
-	resetAlt(window.activeTextEditor.document, original, result);
+	resetAlt(window.activeTextEditor.document, original, result, src);
 	window.showInformationMessage(`Got: ${result}`);
-}
-
-export async function inputCaptureContent(
-  lineRange: LineRange | undefined
-): Promise<CaptureInput | undefined> {
-  function describeLineRange(lineRange: LineRange | undefined) {
-    if (!lineRange) {
-      return '';
-    }
-
-    const [start, end] = lineRange;
-    return start === end ? `line ${start}` : `lines ${start}-${end}`;
-  }
-
-  const titleResult = await window.showInputBox({
-    placeHolder: 'Enter a title for your rule',
-    prompt: `What rule do you want to capture at ${describeLineRange(lineRange)}?`,
-    validateInput: (value) => (value.trim() === '' ? 'Title is required' : ''),
-  });
-
-  if (!titleResult) {
-    // exit early when no title given
-    return;
-  }
-
-  const descriptionResult = await window.showInputBox({
-    placeHolder: 'Add a description',
-    prompt: `Give your rule a description (optional)`,
-  });
-
-  const result: CaptureInput = {
-    title: titleResult.trim(),
-    description: descriptionResult?.trim() ?? '',
-  };
-
-  return result;
 }
 
 export async function showImgCaptionMade(source: CaptureSource) {

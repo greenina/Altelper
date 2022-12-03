@@ -27,7 +27,7 @@ export async function showQuickPick(text: CaptureSource) {
 
 async function reLoadHistory(src: string, elem:string, original: CaptureSource){
 	console.log("reLoadHistory of ", src, elem);
-	const list = ["Draw Another Recommendation"];
+	const list = ["Write from Scratch","Draw Another Recommendation"];
 	list.push(elem);
 	const uiList = list.concat(pastRec);
 	let index = 0;
@@ -38,7 +38,7 @@ async function reLoadHistory(src: string, elem:string, original: CaptureSource){
 			// return window.showInformationMessage('Selected!');
 		}
 	});
-	if(index == 0){
+	if(index == 1){
 		const newRec = getCaptionRec(src);
 		pastRec.push(elem);
 		// console.log("Recorrd Updated: ", pastRec);
@@ -66,6 +66,7 @@ export async function resetAlt(document: TextDocument, original: CaptureSource, 
 	if(!result){
 		return{};
 	}
+	// TODO: 아래처럼 하지 말고 original parsing 해서 height, weight 같은 다른 attribute도 반영 시키기
 	const final = `<img src="` + src + `" alt="` + result + `" />`;
 	editor?.edit(editBuilder => {
 		editBuilder.replace(selection, final);

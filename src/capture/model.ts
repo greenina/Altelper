@@ -6,8 +6,3 @@ export interface CaptureSource {
   lineRange: Range | undefined;
 	content: string | undefined;
 }
-
-export interface CaptureInput {
-  title: string;
-  description: string;
-}

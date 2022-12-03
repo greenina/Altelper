@@ -84,7 +84,7 @@ export async function resetAlt(document: TextDocument, original: CaptureSource, 
 	}
 	// TODO: algorithm refactoring : 아래처럼 하지 말고 original parsing 해서 height, weight 같은 다른 attribute도 반영 시키기
 	const text_div = `<div>` + `${div_text == "Not Captured"?null:div_text}`; 
-	const final = text_div + `</div>\n<img src="` + src + `" \n	alt="` + result + `" />`;
+	const final = text_div + `</div>\n<img \n	src="` + src + `" \n	alt="` + result + `"\n/>`;
 	editor?.edit(editBuilder => {
 		editBuilder.replace(selection, final);
 	});

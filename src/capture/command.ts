@@ -36,14 +36,6 @@ async function inferContextFromActiveEditor(): Promise<{
 	const editor = window.activeTextEditor;
 
 	if (!editor) {
-		// const dummy2 :number = 3;
-		// const dummy3 :number = 5;
-		// const dummy1 : LineRange = [dummy2, dummy3];
-		// const dummy4 : string = "STRING";
-		// const dummy : Promise<{
-		// 	lineRange?: [number, number];
-		// 	content: string;
-		// }> = {dummy1, dummy4};
     return {};
   }
 

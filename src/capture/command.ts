@@ -22,7 +22,7 @@ export default async function capture(): Promise<any>{
     content
   };
 	// console.log("Linerange: ", lineRange);
-	showQuickPick(source);
+	await showQuickPick(source);
 
 
   return await ui.showImgCaptionMade(source);

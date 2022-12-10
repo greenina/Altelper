@@ -20,18 +20,18 @@
 	"activationEvents": [
 		"onLanguage:html",
 		"onLanguage:markdown",
-		"onCommand:cs491i.capture"
+		"onCommand:altelper.capture"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "cs491i.capture",
-				"title": "CS492 Image-Text Synergy"
+				"command": "altelper.capture",
+				"title": "Altelper"
 			}
 		],
 		"configuration": {
-			"title": "CS492I"
+			"title": "Altelper"
 		}
 	},
 	"scripts": {
